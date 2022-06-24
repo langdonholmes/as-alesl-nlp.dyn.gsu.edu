@@ -9,21 +9,9 @@
 # Available chart versions: https://jupyterhub.github.io/helm-chart/
 #
 hub:
-  config:
-    Authenticator:
-      admin_users:
-        - langdon
-        - joon
-      allowed_users:
-        - wes
-        - scott
-        - terry
-        - qian
-        - youngmeen
-    DummyAuthenticator:
-      password: scrams2.0
-    JupyterHub:
-      authenticator_class: dummy
+  existingSecret: jhub-user-secrets
+cull:
+  enabled: false
 proxy:
   https:
     enabled: false
