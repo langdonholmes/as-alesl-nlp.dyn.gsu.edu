@@ -1,0 +1,82 @@
+# This file can update the JupyterHub Helm chart's default configuration values.
+#
+# For reference see the configuration reference and default values, but make
+# sure to refer to the Helm chart version of interest to you!
+#
+# Introduction to YAML:     https://www.youtube.com/watch?v=cdLNKUoMc6c
+# Chart config reference:   https://zero-to-jupyterhub.readthedocs.io/en/stable/resources/reference.html
+# Chart default values:     https://github.com/jupyterhub/zero-to-jupyterhub-k8s/blob/HEAD/jupyterhub/values.yaml
+# Available chart versions: https://jupyterhub.github.io/helm-chart/
+#
+hub:
+  config:
+    Authenticator:
+      admin_users:
+        - langdon
+        - joon
+      allowed_users:
+        - wes
+        - scott
+        - terry
+        - qian
+        - youngmeen
+    DummyAuthenticator:
+      password: scrams2.0
+    JupyterHub:
+      authenticator_class: dummy
+proxy:
+  https:
+    enabled: false
+    hosts:
+      -  as-alesl-nlp.dyn.gsu.edu
+  service:
+    loadBalancerIP: 10.0.0.150
+singleuser:
+  defaultUrl: "/lab"
+  extraEnv:
+    JUPYTERHUB_SINGLEUSER_APP: "jupyter_server.serverapp.ServerApp"
+    GRANT_SUDO: "yes"
+    NOTEBOOK_ARGS: "--allow-root"
+  uid: 0
+  cmd: start-singleuser.sh
+  image:
+    # You should replace the "latest" tag with a fixed version from:
+    # https://hub.docker.com/r/jupyter/datascience-notebook/tags/
+    # Inspect the Dockerfile at:
+    # https://github.com/jupyter/docker-stacks/tree/HEAD/datascience-notebook/Dockerfile
+    name: langdonholmes/base-nlp
+    tag: latest
+  profileList:
+    - display_name: "Normal Server"
+      description: "Spawns a notebook server with no GPU access"
+    - display_name: "RStudio Server"
+      description: "Spawns an RStudio interface"
+      kubespawner_override:
+        image: langdonholmes/rstudio
+        default_url: "/rstudio"
+        pullPolicy: Always
+    - display_name: "GPU Server"
+      description: "Spawns a notebook server with access to the GPU. There can be only one at a time."
+      kubespawner_override:
+        extra_resource_limits:
+          nvidia.com/gpu: "1"
+        extra_resource_guarantees:
+          nvidia.com/gpu: "1"
+  storage:
+    capacity: 50Gi
+    extraVolumes:
+      - name: jupyterhub-shared
+        persistentVolumeClaim:
+          claimName: shared-storage-claim
+      - name: jupyterhub-lts-shared
+        persistentVolumeClaim:
+          claimName: lts-storage-claim
+    extraVolumeMounts:
+      - name: jupyterhub-shared
+        mountPath: /home/jovyan/shared
+      - name: jupyterhub-lts-shared
+        mountPath: /home/jovyan/long_term_storage
+ingress:
+  enabled: true
+  hosts:
+    - as-alesl-nlp.dyn.gsu.edu

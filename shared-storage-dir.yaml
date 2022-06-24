@@ -1,0 +1,35 @@
+## shared-storage-dir.yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: shared-storage-volume
+spec:
+  capacity:
+    storage: 1000Gi
+#  volumeMode: Filesystem
+  accessModes:
+  - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: local-shared
+  hostPath:
+    path: "/srv/data"
+#  nodeAffinity:
+#    required:
+#      nodeSelectorTerms:
+#      - matchExpressions:
+#        - key: kubernetes.io/hostname
+#          operator: In
+#          values:
+#          - as-alesl-nlp
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: shared-storage-claim
+spec:
+  storageClassName: local-shared
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1000Gi

@@ -1,0 +1,35 @@
+## shared-storage-dir.yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: lts-storage-volume
+spec:
+  capacity:
+    storage: 3.4Gi
+#  volumeMode: Filesystem
+  accessModes:
+  - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: lts-shared
+  hostPath:
+    path: "/mnt/raid1_3TiB/data"
+#  nodeAffinity:
+#    required:
+#      nodeSelectorTerms:
+#      - matchExpressions:
+#        - key: kubernetes.io/hostname
+#          operator: In
+#          values:
+#          - as-alesl-nlp
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: lts-storage-claim
+spec:
+  storageClassName: lts-shared
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 3.4Gi
