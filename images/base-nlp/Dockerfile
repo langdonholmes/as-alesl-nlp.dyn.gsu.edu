@@ -1,13 +1,11 @@
 FROM jupyter/pyspark-notebook
 
-USER root
+USER ${NB_UID}
 
 RUN echo "envs_dirs:" >> "${CONDA_DIR}/.condarc" && \
     echo "  - /home/jovyan/conda_envs/" >> "${CONDA_DIR}/.condarc" && \
     fix-permissions "${CONDA_DIR}"
-    
-USER $NB_UID
-    
+        
 RUN mamba install --quiet --yes \
     'spacy' \
     'nltk' \
