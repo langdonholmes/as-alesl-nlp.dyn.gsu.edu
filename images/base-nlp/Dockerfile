@@ -19,5 +19,4 @@ RUN pip install --no-cache-dir torch && \
     jupyter labextension install jupyterlab-plotly
     
 RUN python -m spacy download en_core_web_sm && \
-    python -m spacy download en_core_web_trf && \
-    python -m nltk.downloader all
+    python -m spacy download en_core_web_trf
