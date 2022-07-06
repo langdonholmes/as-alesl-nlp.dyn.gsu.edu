@@ -6,17 +6,27 @@ RUN echo "envs_dirs:" >> "${CONDA_DIR}/.condarc" && \
     echo "  - /home/jovyan/conda_envs/" >> "${CONDA_DIR}/.condarc" && \
     fix-permissions "${CONDA_DIR}"
         
-RUN mamba install --quiet --yes \
-    'spacy' \
-    'nltk' \
-    'gensim' \
-    'gh' \
-    'nb_conda_kernels' && \
-    mamba clean --all -f -y
-    
-RUN pip install --no-cache-dir torch && \
-    pip install jupyterlab-git && \
-    jupyter labextension install jupyterlab-plotly
-    
-RUN python -m spacy download en_core_web_sm && \
-    python -m spacy download en_core_web_trf
+RUN conda update --all --yes \
+    && conda install -c pytorch -c conda-forge --quiet --yes \
+        pytorch \
+        torchvision \
+        torchaudio \
+        cudatoolkit=11.6 \
+RUN conda install -c huggingface --quiet --yes \
+        transformers \
+    && mamba install --quiet --yes \
+        'nltk' \
+        'gensim' \
+        'gh' \
+        'nb_conda_kernels' \
+        'spacy' \
+        'spacy-transformers' \
+    && mamba clean --all -f -y \
+    && pip install \
+        jupyterlab-git \
+        transformers \
+    && jupyter labextension install jupyterlab-plotly \
+    && fix-permissions "${CONDA_DIR}" \
+    && fix-permissions "/home/${NB_USER}"
+
+RUN python -m spacy download en_core_web_trf
