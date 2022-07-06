@@ -19,11 +19,11 @@ RUN mamba install --quiet --yes \
         'gh' \
         'nb_conda_kernels' \
         'spacy' \
-    && mamba clean --all -f -y \
+        'cupy' \
     && pip install \
         jupyterlab-git \
         transformers \
-        spacy-transformers \
+    && mamba clean --all -f -y \
     && jupyter labextension install jupyterlab-plotly \
     && fix-permissions "${CONDA_DIR}" \
     && fix-permissions "/home/${NB_USER}"
