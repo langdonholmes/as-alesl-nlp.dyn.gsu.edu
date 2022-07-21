@@ -23,9 +23,14 @@ RUN mamba install --quiet --yes \
     && pip install \
         jupyterlab-git \
         transformers \
+        datasets \
+        rich \
     && mamba clean --all -f -y \
     && jupyter labextension install jupyterlab-plotly \
     && fix-permissions "${CONDA_DIR}" \
     && fix-permissions "/home/${NB_USER}"
 
-RUN python -m spacy download en_core_web_trf
+RUN python -m spacy download en_core_web_sm \
+    && python -m spacy download en_core_web_lg \
+    && python -m spacy download en_core_web_trf \
+
