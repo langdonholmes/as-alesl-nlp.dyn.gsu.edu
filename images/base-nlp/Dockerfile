@@ -21,6 +21,9 @@ RUN mamba install --quiet --yes \
         'spacy' \
         'cupy' \
     && pip install \
+        geopandas \
+        jupyter-server-proxy \
+        dask-labextension \
         jupyterlab-git \
         transformers \
         datasets \
@@ -32,5 +35,4 @@ RUN mamba install --quiet --yes \
 
 RUN python -m spacy download en_core_web_sm \
     && python -m spacy download en_core_web_lg \
-    && python -m spacy download en_core_web_trf \
-
+    && python -m spacy download en_core_web_trf
