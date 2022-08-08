@@ -1,6 +1,7 @@
 FROM jupyter/r-notebook
 
 RUN python3 -m pip install jupyter-rsession-proxy
+
 #RUN cd /tmp/ && \
 #    git clone --depth 1 https://github.com/jupyterhub/jupyter-server-proxy && \
 #    cd jupyter-server-proxy/jupyterlab-server-proxy && \
@@ -16,8 +17,9 @@ RUN apt-get update -qq --yes && \
         sudo \
         libapparmor1 \
         lsb-release \
-#        libpq5 \
-        libclang-dev  > /dev/null
+        cmake \
+        libpq5 \
+        libclang-dev > /dev/null
 
 # apt packages needed for R packages
 #RUN apt update --yes > /dev/null && \
@@ -32,6 +34,19 @@ RUN curl --silent --location --fail ${RSTUDIO_URL} > /tmp/rstudio.deb && \
 #RUN curl --silent --location --fail ${SHINY_SERVER_URL} > /tmp/shiny-server.deb && \
 #    dpkg -i /tmp/shiny-server.deb && \
 #    rm /tmp/shiny-server.deb
+
+RUN mamba install --quiet --yes \
+    'r-hmisc' \
+    'r-lme4' \
+    'r-lmertest' \
+    'r-psych' \
+    'r-nlme' \
+    'r-randomforest' \
+    'r-car' \
+    'r-rstatix' && \
+    mamba clean --all -f -y && \
+    fix-permissions "${CONDA_DIR}" && \
+    fix-permissions "/home/${NB_USER}"
     
 ENV PATH=$PATH:/usr/lib/rstudio-server/bin
 USER $NB_USER
